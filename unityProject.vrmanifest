@@ -1,0 +1,16 @@
+{
+  "source": "Unity",
+  "applications": [
+    {
+      "app_key": "application.generated.unity.cnnvisvr.exe",
+      "launch_type": "url",
+      "url": "steam://launch/",
+      "action_manifest_path": "C:\\Users\\Nadine\\Unity_Projekte\\CNNVisVR\\actions.json",
+      "strings": {
+        "en_us": {
+          "name": "CNNVisVR [Testing]"
+        }
+      }
+    }
+  ]
+}
