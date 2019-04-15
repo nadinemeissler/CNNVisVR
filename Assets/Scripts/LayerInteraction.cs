@@ -11,7 +11,6 @@ public class LayerInteraction : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
     }
 
     // Update is called once per frame
@@ -22,19 +21,24 @@ public class LayerInteraction : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if(!collision)
+        if (!collision)
         {
             print("Kollision");
-            string tag = other.transform.parent.parent.tag;
 
-            print("tag: " + tag);
-
-            if (tag == "GameController")
+            if(other.tag != null) //other.transform.parent.parent
             {
-                print("Kollision mit Laser Pointer");
-                this.transform.localScale += new Vector3(0.1F, 0.1F, 0.1F);
-                collision = true;
+                string tag = other.tag;
+
+                print("tag: " + tag);
+
+                if (other.CompareTag("Dot"))
+                {
+                    print("Kollision mit Pointer");
+                    this.transform.localScale += new Vector3(0.1F, 0.1F, 0.1F);
+                    collision = true;
+                }
             }
+                      
         }
         
     }
