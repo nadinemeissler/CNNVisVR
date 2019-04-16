@@ -63,19 +63,16 @@ public class VRInputModule : BaseInputModule
         // Check for object hit, get the down handler, call it
         GameObject newPointerPress = ExecuteEvents.ExecuteHierarchy(m_CurrentObject, data, ExecuteEvents.pointerDownHandler);
 
-        // If now down handler, try and get click handler
+        // If no down handler, try and get click handler
         if(newPointerPress == null)
         {
             newPointerPress = ExecuteEvents.GetEventHandler<IPointerClickHandler>(m_CurrentObject);
         }
 
-
         // Set data
         data.pressPosition = data.position;
         data.pointerPress = newPointerPress;
         data.rawPointerPress = m_CurrentObject;
-
-
 
     }
 

@@ -33,7 +33,7 @@ public class ViveControllerInput : MonoBehaviour
         }
 
         // Test um Feature Map über Drücken des Triggers vergrößert anzuzeigen
-        if (triggerPressed)
+        /*if (triggerPressed)
         {
             if (featureMapCanvas.gameObject.activeSelf)
             {
@@ -44,7 +44,7 @@ public class ViveControllerInput : MonoBehaviour
             }
             
             triggerPressed = false;
-        }
+        }*/
 
         // Mit Taste "s" Screenshot aus HMD Sicht auf Desktop speichern
         if (Input.GetKeyDown(KeyCode.S))

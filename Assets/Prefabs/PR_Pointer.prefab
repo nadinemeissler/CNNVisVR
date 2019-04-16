@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 1949655371090251941}
   m_Layer: 0
   m_Name: PR_Pointer
-  m_TagString: Untagged
+  m_TagString: Pointer
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -46,9 +46,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd26d9ea04c91ae45a4c221839f6834a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_DefaultLenth: 5
+  m_DefaultLength: 5
   m_Dot: {fileID: 1949655371103093559}
   m_InputModule: {fileID: 0}
+  m_PointerCollision: 0
+  m_PointerExit: 0
 --- !u!20 &1949655371090251942
 Camera:
   m_ObjectHideFlags: 0
@@ -108,7 +110,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: 7516db9de2a685346840f7ae7c2827e6, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -208,7 +210,7 @@ GameObject:
   - component: {fileID: 1949655371103093553}
   m_Layer: 0
   m_Name: Dot
-  m_TagString: Untagged
+  m_TagString: Dot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
