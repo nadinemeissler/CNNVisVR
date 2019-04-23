@@ -41,7 +41,7 @@ public class Pointer : MonoBehaviour
         if (hit.collider != null)
         {
             endPosition = hit.point;
-            print(hit.collider.gameObject.name);
+            //print(hit.collider.gameObject.name);
 
             // change pointer color if it hits a button
 
