@@ -12,6 +12,7 @@ public class SpriteLoader : MonoBehaviour
 
     public Sprite[] filterSpritesConv1, filterSpritesConv2;
     public Sprite[] fmSpritesConv1, fmSpritesConv2, fmSpritesPool1;
+    public Sprite[] inputImg;
     
     private void Awake()
     {
@@ -33,6 +34,9 @@ public class SpriteLoader : MonoBehaviour
 
             // Load all feature map sprites for pool1 layer
             fmSpritesPool1 = Resources.LoadAll<Sprite>("Sprites/FeatureMaps/pool1");
+
+            // Load all input images
+            inputImg = Resources.LoadAll<Sprite>("Sprites/InputImg");
 
             /*foreach (var s in filterSpritesConv1)
             {
