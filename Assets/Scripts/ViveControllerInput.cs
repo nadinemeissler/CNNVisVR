@@ -20,14 +20,14 @@ public class ViveControllerInput : MonoBehaviour
     {
         if (SteamVR_Actions._default.InteractUI.GetStateUp(SteamVR_Input_Sources.Any))
         {
-            print("Trigger is up!");
+            //print("Trigger is up!");
             triggerDown = false;
             triggerPressed = true;
         }
 
         if (SteamVR_Actions._default.InteractUI.GetStateDown(SteamVR_Input_Sources.Any))
         {
-            print("Trigger is down!");
+            //print("Trigger is down!");
             triggerPressed = false;
             triggerDown = true;
         }

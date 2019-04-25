@@ -16,8 +16,13 @@ public class CanvasController : MonoBehaviour
     public Canvas[] canvasInOut;
     // Canvas for layer name
     public Canvas canvasLayerName;
+    // Canvas for input selection
+    public Canvas canvasInputSelect;
 
-    // Array for GameObjects with the layer buttons as children
+    // Image from 3D model which displays input image
+    public Image[] inputImages;
+
+    // Array for GameObjects which have the layer buttons as children
     public GameObject[] layerObjs;    
 
     SpriteLoader spriteLoader;
@@ -120,9 +125,65 @@ public class CanvasController : MonoBehaviour
         
     }
 
+    // Called from buttons from Canvas_Middle_Input
+    public void ShowInputSelection()
+    {
+        // Show input selection canvas
+        canvasInputSelect.gameObject.SetActive(true);
+    }
+
+    // Called from buttons from input selection canvas
+    public void ChangeInputImg()
+    {
+        var go = EventSystem.current.currentSelectedGameObject;
+
+        // Detect which image was selected and save ID in selectedInput
+        switch (go.name)
+        {
+            case "Input_Image_0":
+                selectedInput = 0;
+                break;
+            case "Input_Image_1":
+                selectedInput = 1;
+                break;
+            case "Input_Image_2":
+                selectedInput = 2;
+                break;
+            case "Input_Image_3":
+                selectedInput = 3;
+                break;
+            case "Input_Image_4":
+                selectedInput = 4;
+                break;
+            case "Input_Image_5":
+                selectedInput = 5;
+                break;
+        }
+
+        Debug.Log("New input img: "+selectedInput);
+
+        // Change image in 3D-Model to new input image
+        if(spriteLoader.inputImg.Length > selectedInput)
+        {
+            for(int i = 0; i < inputImages.Length; i++)
+            {
+                inputImages[i].sprite = spriteLoader.inputImg[selectedInput];
+            }   
+        }
+
+        // Hide input selection canvas
+        // Add animation?
+        canvasInputSelect.gameObject.SetActive(false);
+        
+    }
+
     private void ShowInput()
     {
-        // set values on Input middle canvas
+        // set values on Input layer canvas
+
+        
+
+        // Show Canvas
     }
 
     private void ShowConv()
@@ -182,6 +243,18 @@ public class CanvasController : MonoBehaviour
         // set values on input canvas
         // image or fms
 
+        // show FMs depending on input image and layer
+        // selectedInput gives ID for input image
+        // depending on ID show the fms for input
+
+        // if selected layer is first layer after input
+        // show input image
+        if (selectedLayer.layerID == 1)
+        {
+            // deactivate feater map buttons
+            // ativate input image button
+
+        }
 
 
         //set values for output canvas
