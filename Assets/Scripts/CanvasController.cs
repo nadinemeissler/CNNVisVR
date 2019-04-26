@@ -19,7 +19,7 @@ public class CanvasController : MonoBehaviour
     // Canvas for input selection
     public Canvas canvasInputSelect;
 
-    // Image from 3D model which displays input image
+    // Images in scene which display input image
     public Image[] inputImages;
 
     // Array for GameObjects which have the layer buttons as children
@@ -31,10 +31,11 @@ public class CanvasController : MonoBehaviour
     Layer[] layers;
     Layer selectedLayer;
     int selectedInput;
-    Text filterNum;
+    Text filterNum, outNum, inNum;
+    Image filterPanel, fmPanelIn, fmPanelOut, inputImgPanel;
+    Button[] filterBtns, fmBtnsIn, fmBtnsOut;
 
-    Image filterPanel, fmPanel;
-    Button[] filterBtns, fmBtns;
+    bool inputChanged;
 
     private void Awake()
     {
@@ -43,9 +44,13 @@ public class CanvasController : MonoBehaviour
         // Get button components from canvas
         // change the parameter to true if buttons are inactive on start
         filterPanel = canvasOperation[0].transform.Find("Filter_Panel").GetComponent<Image>();
+        fmPanelIn = canvasInOut[0].transform.Find("FM_Panel").GetComponent<Image>();
+        fmPanelOut = canvasInOut[1].transform.Find("FM_Panel").GetComponent<Image>();
+
         filterBtns = filterPanel.GetComponentsInChildren<Button>(true);
 
-        fmBtns = canvasOperation[2].GetComponentsInChildren<Button>(true);
+        fmBtnsIn = fmPanelIn.GetComponentsInChildren<Button>(true);
+        fmBtnsOut = fmPanelOut.GetComponentsInChildren<Button>(true);
 
         layerBtns = new Button[layerObjs.Length];
         layers = new Layer[layerBtns.Length];
@@ -69,6 +74,11 @@ public class CanvasController : MonoBehaviour
     {
         // get text component for number of filters from canvas
         filterNum = canvasOperation[0].transform.Find("FilterNum_Text").GetComponent<Text>();
+        // get text component for number of output fms from canvas
+        outNum = canvasInOut[1].transform.Find("FeatureM_Text").GetComponent<Text>();
+
+        // get button component for input image button from canvas_middle_input
+        inputImgPanel = canvasInOut[0].transform.Find("InputImg_Panel").GetComponent<Image>();
 
         // set layer IDs, layer types and names
         for (int i = 0; i < layers.Length; i++)
@@ -109,20 +119,73 @@ public class CanvasController : MonoBehaviour
         //ShowConv();
 
 
-        Debug.Log("Anz. Buttons: "+filterBtns.Length);
-
-       foreach (var btn in filterBtns)
-        {
-            Debug.Log("Button gefunden: "+btn.name);
-        }
-
-        
+        Debug.Log("Anz. Buttons: "+filterBtns.Length);        
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if(inputChanged)
+        {
+            inputChanged = false;
+            switch (selectedLayer.layerType)
+            {
+                case "input":
+                    break;
+                case "conv":
+                    UpdateConv();
+                    break;
+                case "pool":
+                    break;
+                case "fc":
+                    break;
+                case "output":
+                    break;
+                default:
+                    Debug.Log("CanvasController: Unknown layerType");
+                    break;
+            }
+        }
+    }
+
+    // Called from layer buttons on 3D model
+    public void ShowLayerDetails()
+    {
+        var go = EventSystem.current.currentSelectedGameObject;
+
+        selectedLayer = go.GetComponent<Layer>();
+
+        // Set layer name on UI and show it
+        canvasLayerName.GetComponentInChildren<Text>().text = selectedLayer.layerName;
+        canvasLayerName.gameObject.SetActive(true);
+
+
+        string type = selectedLayer.layerType;
+
+        // call next functions depending on layer type
+        switch (type)
+        {
+            case "input":
+                Debug.Log("Layer: " + type);
+                break;
+            case "conv":
+                UpdateConv();
+                ShowConv();
+                break;
+            case "pool":
+                Debug.Log("Layer: " + type);
+                ShowPool();
+                break;
+            case "fc":
+                Debug.Log("Layer: " + type);
+                break;
+            case "output":
+                Debug.Log("Layer: " + type);
+                break;
+            default:
+                Debug.Log("CanvasController: Unknown layerType");
+                break;
+        }
     }
 
     // Called from buttons from Canvas_Middle_Input
@@ -162,7 +225,7 @@ public class CanvasController : MonoBehaviour
 
         Debug.Log("New input img: "+selectedInput);
 
-        // Change image in 3D-Model to new input image
+        // Change input images in scene to new input image
         if(spriteLoader.inputImg.Length > selectedInput)
         {
             for(int i = 0; i < inputImages.Length; i++)
@@ -170,6 +233,13 @@ public class CanvasController : MonoBehaviour
                 inputImages[i].sprite = spriteLoader.inputImg[selectedInput];
             }   
         }
+
+        // TO-DO
+        // Change fms according to new input
+        // Update and boolean for changes??
+        // own functions for filter and fms with layer type as input?
+        // called here or with boolean for change in update
+        inputChanged = true;
 
         // Hide input selection canvas
         // Add animation?
@@ -186,40 +256,61 @@ public class CanvasController : MonoBehaviour
         // Show Canvas
     }
 
-    private void ShowConv()
+    private void UpdateConv()
     {
         // set values on operation canvas
         // filter
         // #filter --> größe des arrays abfragen
         // filter size --> beibehalten auf canvas
 
-        
-        // Load sprites from conv1 or conv2 filters depending on layer name
-        Sprite[] sprites;
 
-        switch(selectedLayer.layerName)
+        // Load sprites from conv1 or conv2 filters and fms depending on layer name
+        Sprite[] sprites;
+        Sprite[] spritesOut;
+        // number of filter/fms
+        int fmNum = 0;
+
+        switch (selectedLayer.layerName)
         {
             case "Convolution 1":
                 sprites = spriteLoader.filterSpritesConv1;
+                spritesOut = spriteLoader.fmSpritesConv1;
+                Debug.Log("Conv1: sprites length "+sprites.Length);
+                Debug.Log("spritesout length " + spritesOut.Length);
                 break;
             case "Convolution 2":
                 sprites = spriteLoader.filterSpritesConv2;
+                spritesOut = spriteLoader.fmSpritesConv2;
+                Debug.Log("Conv2: sprites length " + sprites.Length);
+                Debug.Log("spritesout length " + spritesOut.Length);
                 break;
             default:
                 sprites = new Sprite[1];
+                spritesOut = new Sprite[1];
                 break;
         }
 
         int spritesLength = sprites.Length;
 
-        if(spritesLength == 1)
+        // length of array with filters = number of filters/fms
+        fmNum = sprites.Length;
+
+        if(spritesLength < 2)
         {
             Debug.Log("CanvasController - ShowConv(): No filter sprites loaded");
             return;
         }
 
+        if (spritesOut.Length < 2)
+        {
+            Debug.Log("CanvasController - ShowConv(): No fm out sprites loaded");
+            return;
+        }
+
         // Set text for number of filters
         filterNum.text = spritesLength.ToString()+" Filter";
+        // Set text for number of output fms
+        outNum.text = spritesLength.ToString()+" Feature Maps";
 
         // Add loaded sprites from resources to buttons
         if (filterBtns.Length > 0)
@@ -245,20 +336,97 @@ public class CanvasController : MonoBehaviour
 
         // show FMs depending on input image and layer
         // selectedInput gives ID for input image
-        // depending on ID show the fms for input
 
-        // if selected layer is first layer after input
-        // show input image
-        if (selectedLayer.layerID == 1)
+        // Set values for output canvas
+        // new fms
+
+        // Add loaded fm sprites from resources to buttons
+        if (fmBtnsOut != null)
         {
-            // deactivate feater map buttons
-            // ativate input image button
+            // depending on input ID show the fms for input
+            switch (selectedInput)
+            {
+                case 0:
+                    for (int i = 0; i < fmNum; i++)
+                    {
+                        fmBtnsOut[i].image.sprite = spritesOut[i];
+                        fmBtnsOut[i].gameObject.SetActive(true);
+                    }
+                    break;
+                case 1:
+                    for (int i = fmNum, j = 0; i < (fmNum * 2); i++, j++)
+                    {
+                        fmBtnsOut[j].image.sprite = spritesOut[i];
+                        fmBtnsOut[j].gameObject.SetActive(true);
+                    }
+                    break;
+                case 2:
+                    for (int i = (fmNum * 2), j = 0; i < (fmNum * 3); i++, j++)
+                    {
+                        fmBtnsOut[j].image.sprite = spritesOut[i];
+                        fmBtnsOut[j].gameObject.SetActive(true);
+                    }
+                    break;
+                case 3:
+                    for (int i = (fmNum * 3), j = 0; i < (fmNum * 4); i++, j++)
+                    {
+                        fmBtnsOut[j].image.sprite = spritesOut[i];
+                        fmBtnsOut[j].gameObject.SetActive(true);
+                    }
+                    break;
+                case 4:
+                    for (int i = (fmNum * 4), j = 0; i < (fmNum * 5); i++, j++)
+                    {
+                        fmBtnsOut[j].image.sprite = spritesOut[i];
+                        fmBtnsOut[j].gameObject.SetActive(true);
+                    }
+                    break;
+                case 5:
+                    for (int i = (fmNum * 5), j = 0; i < (fmNum * 6); i++, j++)
+                    {
+                        fmBtnsOut[j].image.sprite = spritesOut[i];
+                        fmBtnsOut[j].gameObject.SetActive(true);
+                    }
+                    break;
+                default:
+                    Debug.Log("No valid input index selected");
+                    break;
+            }
 
+            // If there are more Buttons than sprites set remaining buttons to inactive
+            if (fmBtnsOut.Length > fmNum)
+            {
+                for (int i = fmNum; i < fmBtnsOut.Length; i++)
+                {
+                    fmBtnsOut[i].gameObject.SetActive(false);
+                }
+            }
         }
 
+        
+    }
 
-        //set values for output canvas
-        // new fms
+    // Show all UI elements for Conv layer
+    private void ShowConv()
+    {
+        // if selected layer is first layer after input
+        // show input image else show fm buttons
+        if (selectedLayer.layerID == 1)
+        {
+            // deactivate feature map buttons
+            fmPanelIn.gameObject.SetActive(false);
+
+            // ativate input image buttons
+            inputImgPanel.gameObject.SetActive(true);
+        }
+        else
+        {
+            // activate feature map buttons
+            fmPanelIn.gameObject.SetActive(true);
+
+            // deativate input image buttons
+            inputImgPanel.gameObject.SetActive(false);
+        }
 
         // show input canvas
         if (canvasInOut[0] != null && !canvasInOut[0].gameObject.activeSelf)
@@ -304,51 +472,5 @@ public class CanvasController : MonoBehaviour
     private void ShowOutput()
     {
         // Set values on Output middle Canvas
-    }
-
-    public void ShowLayerDetails()
-    {
-        var go = EventSystem.current.currentSelectedGameObject;
-
-        selectedLayer = go.GetComponent<Layer>();
-
-        // Set layer name on UI and show it
-        canvasLayerName.GetComponentInChildren<Text>().text = selectedLayer.layerName;
-        canvasLayerName.gameObject.SetActive(true);
-
-
-        string type = selectedLayer.layerType;
-
-        switch (type)
-        {
-            case "input":
-                Debug.Log("Layer: "+ type);
-                break;
-            case "conv":
-                ShowConv();
-                break;
-            case "pool":
-                Debug.Log("Layer: " + type);
-                ShowPool();
-                break;
-            case "fc":
-                Debug.Log("Layer: " + type);
-                break;
-            case "output":
-                Debug.Log("Layer: " + type);
-                break;
-            default:
-                Debug.Log("CanvasController: Unknown layerType");
-                break;
-        }
-
-        /*
-        foreach (var canvas in canvasOperation)
-        {
-            if(!canvas.gameObject.activeSelf)
-            {
-                canvas.gameObject.SetActive(true);
-            }
-        }*/
     }
 }
