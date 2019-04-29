@@ -10,11 +10,11 @@ public class SpriteLoader : MonoBehaviour
      * 
      */
 
-    public Sprite[] filterSpritesConv1, filterSpritesConv2;
-    public Sprite[,] fmSprites;
-    public Sprite[] inputImg;
+    private Sprite[] filterSpritesConv1, filterSpritesConv2;
+    //private Sprite[,] fmSprites;
+    private Sprite[] inputImg;
 
-    public Sprite[] fmSpritesConv1, fmSpritesConv2, fmSpritesPool1;
+    private Sprite[] fmSpritesConv1, fmSpritesConv2, fmSpritesPool1;
 
     int maxFms = 64;
 
@@ -84,5 +84,40 @@ public class SpriteLoader : MonoBehaviour
     void Start()
     {
         // Resources.UnloadUnusedAssets
+    }
+
+    public Sprite[] GetInputImages()
+    {
+        return inputImg;
+    }
+
+    public Sprite[] GetFilterSprites(string layername)
+    {
+        switch(layername)
+        {
+            case "Convolution 1":
+                return filterSpritesConv1;
+            case "Convolution 2":
+                return filterSpritesConv2;
+            default:
+                Debug.Log("SpriteLoader - GetFilterSprites(): invalid layername: "+layername);
+                return new Sprite[1];
+        }
+    }
+
+    public Sprite[] GetFmSprites(string layername)
+    {
+        switch (layername)
+        {
+            case "Convolution 1":
+                return fmSpritesConv1;
+            case "Convolution 2":
+                return fmSpritesConv2;
+            case "Pooling 1":
+                return fmSpritesPool1;
+            default:
+                Debug.Log("SpriteLoader - GetFmSprites(): invalid layername: "+layername);
+                return new Sprite[1];
+        }
     }
 }

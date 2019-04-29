@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7288607027514900223}
   - component: {fileID: 859948974956969985}
   - component: {fileID: 6372778271382319444}
-  - component: {fileID: 2916487498908892888}
+  - component: {fileID: 1187308862666583576}
   m_Layer: 5
   m_Name: LayerName_Button
   m_TagString: Untagged
@@ -150,7 +150,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &2916487498908892888
+--- !u!114 &1187308862666583576
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -164,6 +164,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   layerID: -1
   layerType: 
+  layerName: 
 --- !u!1 &7005993699023028697
 GameObject:
   m_ObjectHideFlags: 0
