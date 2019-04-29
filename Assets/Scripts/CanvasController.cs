@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -16,8 +17,14 @@ public class CanvasController : MonoBehaviour
     public Canvas[] canvasInOut;
     // Canvas for layer name
     public Canvas canvasLayerName;
+    // Canvas for filter details
+    public Canvas canvasFilterDetails;
+    // Canvas for feature map details
+    public Canvas canvasFmDetails;
     // Canvas for input selection
     public Canvas canvasInputSelect;
+    // Image background panels which have to change color
+    public Image[] colorPanels;
 
     // Images in scene which display input image
     public Image[] inputImages;
@@ -31,9 +38,13 @@ public class CanvasController : MonoBehaviour
     Layer[] layers;
     Layer selectedLayer;
     int selectedInput;
-    Text filterNum, outNum, inNum;
+    Text filterNum, outNum, inNum, filterName, filterValuesTxt;
+    Image filterImg;
     Image filterPanel, fmPanelIn, fmPanelOut, inputImgPanel;
     Button[] filterBtns, fmBtnsIn, fmBtnsOut;
+
+    // Colors for canvas
+    Color32 convColor, poolColor, normalColor;
 
     bool inputChanged;
 
@@ -67,9 +78,6 @@ public class CanvasController : MonoBehaviour
             layers[i] = layerBtns[i].GetComponent<Layer>();
         }
 
-        // Set layer details here, the script SpriteLoader ??
-        // needs to set references to layer input, output and filters in Start()
-
     }
 
     // Start is called before the first frame update
@@ -82,8 +90,18 @@ public class CanvasController : MonoBehaviour
         // get text component for number of input fms from canvas
         inNum = fmPanelIn.transform.Find("FeatureM_Text").GetComponent<Text>();
 
+        // get components from filter detail canvas
+        filterName = canvasFilterDetails.transform.Find("Filter_Text").GetComponent<Text>();
+        filterValuesTxt = canvasFilterDetails.transform.Find("FilterValues_Text").GetComponent<Text>();
+        filterImg = canvasFilterDetails.transform.Find("Filter_Image").GetComponent<Image>();
+
         // get button component for input image button from canvas_middle_input
         inputImgPanel = canvasInOut[0].transform.Find("InputImg_Panel").GetComponent<Image>();
+
+        // Set colors
+        convColor = new Color32(226, 127, 42, 184);
+        poolColor = new Color32(226, 56, 42, 184);
+        normalColor = new Color32(255, 255, 255, 184);
 
         // set layer IDs, layer types and names
         for (int i = 0; i < layers.Length; i++)
@@ -198,6 +216,85 @@ public class CanvasController : MonoBehaviour
                 Debug.Log("CanvasController: Unknown layerType");
                 break;
         }
+    }
+
+    // Called from Buttons which display filter images
+    public void ShowFilterDetails()
+    {
+        // Get selected filter button
+        var go = EventSystem.current.currentSelectedGameObject;
+        Button btn = go.GetComponent<Button>();
+
+        // get filter ID from sprite name
+        string filterID = btn.image.sprite.name.Substring(btn.image.sprite.name.Length - 2);
+     
+        // change filter name on Canvas
+        filterName.text = "Filter "+filterID;
+
+        // change filter image on new canvas to selected filter image
+        filterImg.sprite = btn.image.sprite;
+
+        // load values for filter
+        string[,] filterValues = spriteLoader.GetFilterValues(selectedLayer.GetLayerName());
+
+        // show filter values on canvas
+        int index = -1;
+
+        if (filterID.StartsWith("0"))
+        {
+            index = Convert.ToInt32(filterID.Substring(1));
+        } else
+        {
+            index = Convert.ToInt32(filterID);
+        }
+
+        filterValuesTxt.text = "";
+
+        if(index > -1 && index < filterValues.GetLength(0))
+        {
+            for(int i = 0; i < filterValues.GetLength(1); i++)
+            {
+                filterValuesTxt.text += filterValues[index, i] + " ";
+
+                // TO-DO
+                if (i < 3)
+                {
+                    
+                } else if(i >=3 && i < 6)
+                {
+
+                } else if(i >= 6 && i < 9)
+                {
+
+                }
+            }
+        } else
+        {
+            Debug.Log("CanvasController - ShowFilterDetails: invalid index");
+        }
+
+        // Show canvas with details
+        canvasFilterDetails.gameObject.SetActive(true);
+    }
+
+    // Called from Buttons which display feature maps
+    public void ShowFmDetails()
+    {
+        // TO-DO
+        // change image
+        // change name
+        // change dimensions
+
+        // Show canvas with details
+        canvasFmDetails.gameObject.SetActive(true);
+    }
+
+    // Called from close buttons
+    public void Hide()
+    {
+        var go = EventSystem.current.currentSelectedGameObject;
+
+        go.transform.parent.gameObject.SetActive(false);
     }
 
     // Called from buttons from Canvas_Middle_LayerInput
@@ -459,6 +556,12 @@ public class CanvasController : MonoBehaviour
         // update output for layer (new feature maps)
         UpdateFms("conv", "out");
 
+        // change color for background panels
+        foreach (var img in colorPanels)
+        {
+            img.color = convColor;
+        }
+
         // show input canvas
         if (canvasInOut[0] != null && !canvasInOut[0].gameObject.activeSelf)
         {
@@ -503,6 +606,12 @@ public class CanvasController : MonoBehaviour
         // Update output canvas for layer (feature maps from pooling layer)
         UpdateFms("pool","out");
 
+        // change color for background panels
+        foreach (var img in colorPanels)
+        {
+            img.color = poolColor;
+        }
+
         // show input canvas
         if (canvasInOut[0] != null && !canvasInOut[0].gameObject.activeSelf)
         {
@@ -534,6 +643,12 @@ public class CanvasController : MonoBehaviour
         // set values on operation canvas
         // set values on input canvas
         // set values for output canvas
+
+        // change color for background panels
+        foreach (var img in colorPanels)
+        {
+            img.color = normalColor;
+        }
 
         // show input canvas
         // show Operation Canvas

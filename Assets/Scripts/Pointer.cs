@@ -45,22 +45,8 @@ public class Pointer : MonoBehaviour
 
             // change pointer color if it hits a button
 
-            // Not used until end of second else if
-            // if collided with gameobject with tag "InteractionObj" set boolean
-            // Reset boolean when they are no longer colliding
-            if(hit.collider.CompareTag("InteractionObj") && !m_PointerCollision)
-            {
-                m_PointerCollision = true;
-            } else if(!hit.collider.CompareTag("InteractionObj") && m_PointerCollision)
-            {
-                m_PointerCollision = false;
-                m_PointerExit = true;
-            }
-        } else if(hit.collider == null && m_PointerCollision)
-        {
-            m_PointerCollision = false;
-            m_PointerExit = true;
-        }
+           
+        } 
 
         // Set position of the dot
         m_Dot.transform.position = endPosition;

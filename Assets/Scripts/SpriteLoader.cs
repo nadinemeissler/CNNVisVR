@@ -16,7 +16,7 @@ public class SpriteLoader : MonoBehaviour
 
     private Sprite[] fmSpritesConv1, fmSpritesConv2, fmSpritesPool1;
 
-    int maxFms = 64;
+    private string[,] m_FilterValConv1, m_FilterValConv2;
 
     private void Awake()
     {
@@ -53,31 +53,59 @@ public class SpriteLoader : MonoBehaviour
             Debug.Log(e);
         }
 
-        /*
-        fmSprites = new Sprite[3, maxFms];
-
-        if((fmSpritesConv1 != null) && (fmSpritesConv2 != null) && (fmSpritesPool1 != null))
+        // load filter values from text file
+        try
         {
-            // save fm sprites in 2 dimensional array to get easy access
-            for(int i = 0; i < maxFms; i++)
+            // load text files with filter values as TextAssets
+            TextAsset filterVal1 = Resources.Load<TextAsset>("TextData/weights_conv1");
+            TextAsset filterVal2 = Resources.Load<TextAsset>("TextData/weights_conv2");
+
+            string[] filterValConv1, filterValConv2;
+
+            // get text from TextAssets and load them into string arrays
+            // split at ';'
+            // last value in file must not have a ; or last value is empty
+            filterValConv1 = filterVal1.ToString().Split(';');
+            filterValConv2 = filterVal2.ToString().Split(';');
+
+            Debug.Log("filterValConv1 länge: " + filterValConv1.Length + " letzter wert: " + filterValConv1[filterValConv1.Length-1]);
+            Debug.Log("filterValConv2 länge: " + filterValConv2.Length + " erster wert: " + filterValConv2[0]);
+
+            // store filter values in two dimensional arrays for easy access
+
+            m_FilterValConv1 = new string[filterValConv1.Length/9, 9];
+            m_FilterValConv2 = new string[filterValConv2.Length / 9, 9];
+
+            int index = 0;
+
+            for (int i = 0; i < m_FilterValConv1.GetLength(0); i++)
             {
-                if(fmSpritesConv1.Length > i)
+                for(int j = 0; j < m_FilterValConv1.GetLength(1); j++)
                 {
-                    fmSprites[0, i] = fmSpritesConv1[i];
-                }
-                if (fmSpritesConv2.Length > i)
-                {
-                    fmSprites[1, i] = fmSpritesConv2[i];
-                }
-                if (fmSpritesPool1.Length > i)
-                {
-                    fmSprites[2, i] = fmSpritesPool1[i];
+                    m_FilterValConv1[i, j] = filterValConv1[index];
+                    index++;
                 }
             }
-        } else
+
+            index = 0;
+
+            for (int i = 0; i < m_FilterValConv2.GetLength(0); i++)
+            {
+                for (int j = 0; j < m_FilterValConv2.GetLength(1); j++)
+                {
+                    m_FilterValConv2[i, j] = filterValConv2[index];
+                    index++;
+                }
+            }
+        }
+        catch (Exception e)
         {
-            Debug.Log("No fm sprites to load into array");
-        }*/
+            Debug.Log("Loading of filter values in SpriteLoader failed with the following exception: ");
+            Debug.Log(e);
+        }
+
+
+
     }
 
     // Start is called before the first frame update
@@ -118,6 +146,20 @@ public class SpriteLoader : MonoBehaviour
             default:
                 Debug.Log("SpriteLoader - GetFmSprites(): invalid layername: "+layername);
                 return new Sprite[1];
+        }
+    }
+
+    public string[,] GetFilterValues(string layername)
+    {
+        switch(layername)
+        {
+            case "Convolution 1":
+                return m_FilterValConv1;
+            case "Convolution 2":
+                return m_FilterValConv2;
+            default:
+                Debug.Log("SpriteLoader - GetFilterValues(): invalid layername: " + layername);
+                return new string[1,1];
         }
     }
 }
