@@ -23,6 +23,8 @@ public class CanvasController : MonoBehaviour
     public Canvas canvasFmDetails;
     // Canvas for input selection
     public Canvas canvasInputSelect;
+    // Canvas for model input
+    public Canvas canvasInput;
     // Image background panels which have to change color
     public Image[] colorPanels;
 
@@ -38,13 +40,13 @@ public class CanvasController : MonoBehaviour
     Layer[] layers;
     Layer selectedLayer;
     int selectedInput;
-    Text filterNum, outNum, inNum, filterName, filterValuesTxt;
-    Image filterImg;
+    Text filterNum, outNum, inNum, filterName, filterValuesTxt, fmName, fmDimensions;
+    Image filterImg, fmImg;
     Image filterPanel, fmPanelIn, fmPanelOut, inputImgPanel;
     Button[] filterBtns, fmBtnsIn, fmBtnsOut;
 
     // Colors for canvas
-    Color32 convColor, poolColor, normalColor;
+    Color32 convColor, poolColor, fcColor, normalColor;
 
     bool inputChanged;
 
@@ -95,13 +97,19 @@ public class CanvasController : MonoBehaviour
         filterValuesTxt = canvasFilterDetails.transform.Find("FilterValues_Text").GetComponent<Text>();
         filterImg = canvasFilterDetails.transform.Find("Filter_Image").GetComponent<Image>();
 
+        // get components from feature map detail canvas
+        fmName = canvasFmDetails.transform.Find("FM_Text").GetComponent<Text>();
+        fmDimensions = canvasFmDetails.transform.Find("Dimensions_Text").GetComponent<Text>();
+        fmImg = canvasFmDetails.transform.Find("FM_Image").GetComponent<Image>();
+
         // get button component for input image button from canvas_middle_input
         inputImgPanel = canvasInOut[0].transform.Find("InputImg_Panel").GetComponent<Image>();
 
         // Set colors
         convColor = new Color32(226, 127, 42, 184);
         poolColor = new Color32(226, 56, 42, 184);
-        normalColor = new Color32(255, 255, 255, 184);
+        fcColor = new Color32(65, 101, 195, 184);
+        normalColor = new Color32(0, 211, 224, 184);
 
         // set layer IDs, layer types and names
         for (int i = 0; i < layers.Length; i++)
@@ -120,32 +128,22 @@ public class CanvasController : MonoBehaviour
                     layers[i].SetInputOutputLength(1, 32);
                     break;
                 case 2:
-                    layers[i].SetLayerType("conv");
-                    layers[i].SetLayerName("Convolution 2");
-                    layers[i].SetInputOutputLength(32, 64);
-                    break;
-                case 3:
                     layers[i].SetLayerType("pool");
                     layers[i].SetLayerName("Pooling 1");
-                    layers[i].SetInputOutputLength(64, 64);
+                    layers[i].SetInputOutputLength(32, 32);
                     break;
-                case 4:
+                case 3:
                     layers[i].SetLayerType("fc");
                     layers[i].SetLayerName("Fully Connected 1");
                     break;
-                case 5:
+                case 4:
                     layers[i].SetLayerType("output");
                     layers[i].SetLayerName("Output");
                     break;
             }
         }
 
-        // For tests!!
-        // Delete!
-        //ShowConv();
-
-
-        Debug.Log("Anz. Buttons: "+filterBtns.Length);        
+        //Debug.Log("Anz. Buttons: "+filterBtns.Length);        
     }
 
     // Update is called once per frame
@@ -190,6 +188,9 @@ public class CanvasController : MonoBehaviour
         canvasLayerName.GetComponentInChildren<Text>().text = selectedLayer.GetLayerName();
         canvasLayerName.gameObject.SetActive(true);
 
+        // deactivate filter and feature map detail canvas
+        canvasFilterDetails.gameObject.SetActive(false);
+        canvasFmDetails.gameObject.SetActive(false);
 
         string type = selectedLayer.GetLayerType();
 
@@ -198,6 +199,7 @@ public class CanvasController : MonoBehaviour
         {
             case "input":
                 Debug.Log("Layer: " + type);
+                ShowInput();
                 break;
             case "conv":
                 ShowConv();
@@ -208,9 +210,11 @@ public class CanvasController : MonoBehaviour
                 break;
             case "fc":
                 Debug.Log("Layer: " + type);
+                ShowFC();
                 break;
             case "output":
                 Debug.Log("Layer: " + type);
+                ShowOutput();
                 break;
             default:
                 Debug.Log("CanvasController: Unknown layerType");
@@ -254,18 +258,26 @@ public class CanvasController : MonoBehaviour
         {
             for(int i = 0; i < filterValues.GetLength(1); i++)
             {
-                filterValuesTxt.text += filterValues[index, i] + " ";
+                double temp = Convert.ToDouble(filterValues[index, i]);
 
-                // TO-DO
-                if (i < 3)
+                if (temp < 0)
                 {
-                    
-                } else if(i >=3 && i < 6)
+                    filterValuesTxt.text += filterValues[index, i].Remove(5) + " ";
+                } else
                 {
+                    filterValuesTxt.text += filterValues[index, i].Remove(4) + " ";
+                }
 
-                } else if(i >= 6 && i < 9)
+                switch(i)
                 {
-
+                    case 2:
+                        filterValuesTxt.text += "\n";
+                        break;
+                    case 5:
+                        filterValuesTxt.text += "\n";
+                        break;
+                    default:
+                        break;
                 }
             }
         } else
@@ -277,13 +289,37 @@ public class CanvasController : MonoBehaviour
         canvasFilterDetails.gameObject.SetActive(true);
     }
 
-    // Called from Buttons which display feature maps
+    // Called from buttons which display feature maps
+    // on conv and pool layers
     public void ShowFmDetails()
     {
-        // TO-DO
         // change image
         // change name
         // change dimensions
+
+        // Get selected feature map button
+        var go = EventSystem.current.currentSelectedGameObject;
+        Button btn = go.GetComponent<Button>();
+
+        // get feature map ID from sprite name
+        string fmID = btn.image.sprite.name.Substring(btn.image.sprite.name.Length - 2);
+
+        // change feature map name on Canvas
+        fmName.text = "Feature Map " + fmID;
+
+        // change feature map image on new canvas to selected feature map image
+        fmImg.sprite = btn.image.sprite;
+
+        // change dimensions text on canvas
+        switch(selectedLayer.GetLayerType())
+        {
+            case "conv":
+                fmDimensions.text = "26x26";
+                break;
+            case "pool":
+                fmDimensions.text = "13x13";
+                break;
+        }
 
         // Show canvas with details
         canvasFmDetails.gameObject.SetActive(true);
@@ -356,9 +392,220 @@ public class CanvasController : MonoBehaviour
         // TO-DO
         // set values on Input layer canvas
 
-        
+        // change color for background panels
+        foreach (var img in colorPanels)
+        {
+            img.color = normalColor;
+        }
+
+        // hide other operation canvas if one is active
+        foreach (var opcanvas in canvasOperation)
+        {
+            if (opcanvas.gameObject.activeSelf) { opcanvas.gameObject.SetActive(false); }
+        }
+
+        // hide layer input and layer output canvas
+        foreach(var tempcanvas in canvasInOut)
+        {
+            if (tempcanvas.gameObject.activeSelf) { tempcanvas.gameObject.SetActive(false); }
+        }
 
         // Show Canvas
+        canvasInput.gameObject.SetActive(true);
+    }
+
+    // Show all UI elements for Conv layer
+    private void ShowConv()
+    {
+        // Update input canvas for layer (input image or fms)
+
+        // if selected layer is first layer after input
+        // show input image else show fm buttons
+        if (selectedLayer.GetLayerID() == 1)
+        {
+            // deactivate feature map buttons
+            fmPanelIn.gameObject.SetActive(false);
+
+            // ativate input image buttons
+            inputImgPanel.gameObject.SetActive(true);
+        }
+        else
+        {
+            // update input fm buttons for layer (feature maps from layer before)
+            UpdateFms("conv", "in");
+
+            // activate feature map buttons
+            fmPanelIn.gameObject.SetActive(true);
+
+            // deativate input image buttons
+            inputImgPanel.gameObject.SetActive(false);
+        }
+
+        // update filters for layer
+        UpdateFilters();
+
+        // update output for layer (new feature maps)
+        UpdateFms("conv", "out");
+
+        // change color for background panels
+        foreach (var img in colorPanels)
+        {
+            img.color = convColor;
+        }
+
+        // hide layer input and layer output canvas
+        foreach (var tempcanvas in canvasInOut)
+        {
+            if (tempcanvas.gameObject.activeSelf) { tempcanvas.gameObject.SetActive(false); }
+        }
+
+        // hide other operation canvas if one is active
+        foreach (var opcanvas in canvasOperation)
+        {
+            if (opcanvas.gameObject.activeSelf) { opcanvas.gameObject.SetActive(false); }
+        }
+
+        // show input canvas
+        if (canvasInOut[0] != null && !canvasInOut[0].gameObject.activeSelf)
+        {
+            canvasInOut[0].gameObject.SetActive(true);
+        }
+
+        // show Operation Canvas
+        if (canvasOperation[0] != null && !canvasOperation[0].gameObject.activeSelf)
+        {
+            canvasOperation[0].gameObject.SetActive(true);
+        }
+
+        // show output canvas
+        if (canvasInOut[1] != null && !canvasInOut[1].gameObject.activeSelf)
+        {
+            canvasInOut[1].gameObject.SetActive(true);
+        }
+    }
+
+    private void ShowPool()
+    {
+        // Update input canvas for layer (feature maps from layer before)
+        
+        // activate feature map buttons
+        fmPanelIn.gameObject.SetActive(true);
+
+        // deativate input image buttons
+        inputImgPanel.gameObject.SetActive(false);
+
+        // update sprites of fm buttons with right feature maps
+        UpdateFms("pool", "in");
+
+        // TO-DO
+        // set values on operation canvas
+
+        // Update output canvas for layer (feature maps from pooling layer)
+        UpdateFms("pool","out");
+
+        // change color for background panels
+        foreach (var img in colorPanels)
+        {
+            img.color = poolColor;
+        }
+
+        // hide layer input and layer output canvas
+        foreach (var tempcanvas in canvasInOut)
+        {
+            if (tempcanvas.gameObject.activeSelf) { tempcanvas.gameObject.SetActive(false); }
+        }
+
+        // hide other operation canvas if one is active
+        foreach (var opcanvas in canvasOperation)
+        {
+            if (opcanvas.gameObject.activeSelf) { opcanvas.gameObject.SetActive(false); }
+        }
+
+        // show input canvas
+        if (canvasInOut[0] != null && !canvasInOut[0].gameObject.activeSelf)
+        {
+            canvasInOut[0].gameObject.SetActive(true);
+        }
+
+        // show Operation Canvas for active layer
+        if (canvasOperation[1] != null && !canvasOperation[1].gameObject.activeSelf)
+        {
+            canvasOperation[1].gameObject.SetActive(true);
+        }
+
+        // show output canvas
+        if (canvasInOut[1] != null && !canvasInOut[1].gameObject.activeSelf)
+        {
+            canvasInOut[1].gameObject.SetActive(true);
+        }
+    }
+
+    private void ShowFC()
+    {
+        // TO-DO
+        // set values on operation canvas
+        // set values on input canvas
+        // set values for output canvas
+
+        // change color for background panels
+        foreach (var img in colorPanels)
+        {
+            img.color = fcColor;
+        }
+
+        // hide other operation canvas if one is active
+        foreach (var opcanvas in canvasOperation)
+        {
+            if (opcanvas.gameObject.activeSelf) { opcanvas.gameObject.SetActive(false); }
+        }
+
+        // hide layer input and layer output canvas
+        foreach (var tempcanvas in canvasInOut)
+        {
+            if (tempcanvas.gameObject.activeSelf) { tempcanvas.gameObject.SetActive(false); }
+        }
+
+        //TO-DO
+        // show input canvas
+
+        // show Operation Canvas for active layer
+        if (canvasOperation[2] != null && !canvasOperation[1].gameObject.activeSelf)
+        {
+            canvasOperation[2].gameObject.SetActive(true);
+        }
+
+        // show output canvas
+        if (!canvasInOut[2].gameObject.activeSelf)
+        {
+            canvasInOut[2].gameObject.SetActive(true);
+        }
+    }
+
+    private void ShowOutput()
+    {
+        // TO-DO
+        // Set values on model Output Canvas
+
+        // change color for background panels
+        foreach (var img in colorPanels)
+        {
+            img.color = fcColor;
+        }
+
+        // hide other operation canvas if one is active
+        foreach (var opcanvas in canvasOperation)
+        {
+            if (opcanvas.gameObject.activeSelf) { opcanvas.gameObject.SetActive(false); }
+        }
+
+        // hide layer input and layer output canvas
+        foreach (var tempcanvas in canvasInOut)
+        {
+            if (tempcanvas.gameObject.activeSelf) { tempcanvas.gameObject.SetActive(false); }
+        }
+
+        // Show Output Canvas
+        canvasOperation[canvasOperation.Length - 1].gameObject.SetActive(true);
     }
 
     private void UpdateFilters()
@@ -396,18 +643,18 @@ public class CanvasController : MonoBehaviour
                     filterBtns[i].gameObject.SetActive(false);
                 }
             }
-        }        
+        }
     }
 
     private void UpdateFms(string layertype, string inOrOut)
     {
-        switch(layertype)
+        switch (layertype)
         {
             case "conv":
             case "pool":
                 break;
             default:
-                Debug.Log("CanvasController - UpdateFms: invalid layertype: "+layertype+". Valid layertypes: conv, pool");
+                Debug.Log("CanvasController - UpdateFms: invalid layertype: " + layertype + ". Valid layertypes: conv, pool");
                 return;
         }
 
@@ -422,10 +669,10 @@ public class CanvasController : MonoBehaviour
             case "in":
                 // if selectedLayer is first conv layer no fms have to be loaded
                 // input is input image
-                if(selectedLayer.GetLayerID() == 1) { return; }
+                if (selectedLayer.GetLayerID() == 1) { return; }
 
-                string layername = layers[selectedLayer.GetLayerID()-1].GetLayerName();
-                Debug.Log("Vorherige Layer: "+layername);
+                string layername = layers[selectedLayer.GetLayerID() - 1].GetLayerName();
+                Debug.Log("Vorherige Layer: " + layername);
 
                 fmSprites = spriteLoader.GetFmSprites(layername);
                 fmBtns = fmBtnsIn;
@@ -453,7 +700,7 @@ public class CanvasController : MonoBehaviour
             Debug.Log("CanvasController - UpdateFms(): No fm sprites loaded");
             return;
         }
-        if(fmBtns.Length < 2)
+        if (fmBtns.Length < 2)
         {
             Debug.Log("CanvasController - UpdateFms(): No Buttons for fms found");
             return;
@@ -521,143 +768,5 @@ public class CanvasController : MonoBehaviour
                 }
             }
         }
-    }
-
-    // Show all UI elements for Conv layer
-    private void ShowConv()
-    {
-        // Update input canvas for layer (input image or fms)
-
-        // if selected layer is first layer after input
-        // show input image else show fm buttons
-        if (selectedLayer.GetLayerID() == 1)
-        {
-            // deactivate feature map buttons
-            fmPanelIn.gameObject.SetActive(false);
-
-            // ativate input image buttons
-            inputImgPanel.gameObject.SetActive(true);
-        }
-        else
-        {
-            // update input fm buttons for layer (feature maps from layer before)
-            UpdateFms("conv", "in");
-
-            // activate feature map buttons
-            fmPanelIn.gameObject.SetActive(true);
-
-            // deativate input image buttons
-            inputImgPanel.gameObject.SetActive(false);
-        }
-
-        // update filters for layer
-        UpdateFilters();
-
-        // update output for layer (new feature maps)
-        UpdateFms("conv", "out");
-
-        // change color for background panels
-        foreach (var img in colorPanels)
-        {
-            img.color = convColor;
-        }
-
-        // show input canvas
-        if (canvasInOut[0] != null && !canvasInOut[0].gameObject.activeSelf)
-        {
-            canvasInOut[0].gameObject.SetActive(true);
-        }
-
-        // hide other operation canvas if one is active
-        foreach (var opcanvas in canvasOperation)
-        {
-            if (opcanvas.gameObject.activeSelf) { opcanvas.gameObject.SetActive(false); }
-        }
-
-        // show Operation Canvas
-        if (canvasOperation[0] != null && !canvasOperation[0].gameObject.activeSelf)
-        {
-            canvasOperation[0].gameObject.SetActive(true);
-        }
-
-        // show output canvas
-        if (canvasInOut[1] != null && !canvasInOut[1].gameObject.activeSelf)
-        {
-            canvasInOut[1].gameObject.SetActive(true);
-        }
-    }
-
-    private void ShowPool()
-    {
-        // Update input canvas for layer (feature maps from layer before)
-        
-        // activate feature map buttons
-        fmPanelIn.gameObject.SetActive(true);
-
-        // deativate input image buttons
-        inputImgPanel.gameObject.SetActive(false);
-
-        // update sprites of fm buttons with right feature maps
-        UpdateFms("pool", "in");
-
-        // TO-DO
-        // set values on operation canvas
-
-        // Update output canvas for layer (feature maps from pooling layer)
-        UpdateFms("pool","out");
-
-        // change color for background panels
-        foreach (var img in colorPanels)
-        {
-            img.color = poolColor;
-        }
-
-        // show input canvas
-        if (canvasInOut[0] != null && !canvasInOut[0].gameObject.activeSelf)
-        {
-            canvasInOut[0].gameObject.SetActive(true);
-        }
-
-        // hide other operation canvas if one is active
-        foreach (var opcanvas in canvasOperation)
-        {
-            if(opcanvas.gameObject.activeSelf) { opcanvas.gameObject.SetActive(false); }
-        }
-
-        // show Operation Canvas for active layer
-        if (canvasOperation[1] != null && !canvasOperation[1].gameObject.activeSelf)
-        {
-            canvasOperation[1].gameObject.SetActive(true);
-        }
-
-        // show output canvas
-        if (canvasInOut[1] != null && !canvasInOut[1].gameObject.activeSelf)
-        {
-            canvasInOut[1].gameObject.SetActive(true);
-        }
-    }
-
-    private void ShowFC()
-    {
-        // TO-DO
-        // set values on operation canvas
-        // set values on input canvas
-        // set values for output canvas
-
-        // change color for background panels
-        foreach (var img in colorPanels)
-        {
-            img.color = normalColor;
-        }
-
-        // show input canvas
-        // show Operation Canvas
-        // show output canvas
-    }
-
-    private void ShowOutput()
-    {
-        // TO-DO
-        // Set values on model Output Canvas
     }
 }

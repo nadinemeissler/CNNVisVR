@@ -28,13 +28,13 @@ public class SpriteLoader : MonoBehaviour
             filterSpritesConv1 = Resources.LoadAll<Sprite>("Sprites/Filter/conv1");
 
             // Load filter sprites for conv2 layer
-            filterSpritesConv2 = Resources.LoadAll<Sprite>("Sprites/Filter/conv2");
+            //filterSpritesConv2 = Resources.LoadAll<Sprite>("Sprites/Filter/conv2");
 
             // Load all feature map sprites for conv1 layer
             fmSpritesConv1 = Resources.LoadAll<Sprite>("Sprites/FeatureMaps/conv1");
 
             // Load all feature map sprites for conv2 layer
-            fmSpritesConv2 = Resources.LoadAll<Sprite>("Sprites/FeatureMaps/conv2");
+            //fmSpritesConv2 = Resources.LoadAll<Sprite>("Sprites/FeatureMaps/conv2");
 
             // Load all feature map sprites for pool1 layer
             fmSpritesPool1 = Resources.LoadAll<Sprite>("Sprites/FeatureMaps/pool1");
@@ -58,7 +58,7 @@ public class SpriteLoader : MonoBehaviour
         {
             // load text files with filter values as TextAssets
             TextAsset filterVal1 = Resources.Load<TextAsset>("TextData/weights_conv1");
-            TextAsset filterVal2 = Resources.Load<TextAsset>("TextData/weights_conv2");
+            //TextAsset filterVal2 = Resources.Load<TextAsset>("TextData/weights_conv2");
 
             string[] filterValConv1, filterValConv2;
 
@@ -66,15 +66,15 @@ public class SpriteLoader : MonoBehaviour
             // split at ';'
             // last value in file must not have a ; or last value is empty
             filterValConv1 = filterVal1.ToString().Split(';');
-            filterValConv2 = filterVal2.ToString().Split(';');
+            //filterValConv2 = filterVal2.ToString().Split(';');
 
             Debug.Log("filterValConv1 länge: " + filterValConv1.Length + " letzter wert: " + filterValConv1[filterValConv1.Length-1]);
-            Debug.Log("filterValConv2 länge: " + filterValConv2.Length + " erster wert: " + filterValConv2[0]);
+            //Debug.Log("filterValConv2 länge: " + filterValConv2.Length + " erster wert: " + filterValConv2[0]);
 
             // store filter values in two dimensional arrays for easy access
 
             m_FilterValConv1 = new string[filterValConv1.Length/9, 9];
-            m_FilterValConv2 = new string[filterValConv2.Length / 9, 9];
+            //m_FilterValConv2 = new string[filterValConv2.Length / 9, 9];
 
             int index = 0;
 
@@ -88,7 +88,7 @@ public class SpriteLoader : MonoBehaviour
             }
 
             index = 0;
-
+            /*
             for (int i = 0; i < m_FilterValConv2.GetLength(0); i++)
             {
                 for (int j = 0; j < m_FilterValConv2.GetLength(1); j++)
@@ -96,7 +96,7 @@ public class SpriteLoader : MonoBehaviour
                     m_FilterValConv2[i, j] = filterValConv2[index];
                     index++;
                 }
-            }
+            }*/
         }
         catch (Exception e)
         {
