@@ -34,11 +34,12 @@ public class Layer : MonoBehaviour
         {
             case "conv":
             case "pool":
+            case "fc":
                 inputLength = newInputLength;
                 outputLength = newOutputLength;
                 break;
             default:
-                Debug.Log("Layer - SetInputLength: invalid layerType or layerType has no inputLenght");
+                Debug.Log("Layer - SetInputLength: invalid layerType or layerType has no inputLength");
                 break;
         }
     }

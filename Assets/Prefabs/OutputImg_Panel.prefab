@@ -44,7 +44,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.68, y: 1.99}
+  m_AnchoredPosition: {x: -0.6799927, y: 1.9899902}
   m_SizeDelta: {x: -28.63, y: -31.31}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7884552059259630164
@@ -69,7 +69,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -216,6 +216,11 @@ PrefabInstance:
       propertyPath: m_Color.b
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1104833466959103878, guid: 98a55ba42f538b84d92fce651ee386f4,
+        type: 3}
+      propertyPath: m_RaycastTarget
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 840579865955847803, guid: 98a55ba42f538b84d92fce651ee386f4,
         type: 3}
       propertyPath: m_IsActive
@@ -345,6 +350,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1104833466959103878, guid: 98a55ba42f538b84d92fce651ee386f4,
+        type: 3}
+      propertyPath: m_RaycastTarget
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1104833466591752177, guid: 98a55ba42f538b84d92fce651ee386f4,
         type: 3}
@@ -476,6 +486,11 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 1104833466959103878, guid: 98a55ba42f538b84d92fce651ee386f4,
+        type: 3}
+      propertyPath: m_RaycastTarget
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1104833466591752177, guid: 98a55ba42f538b84d92fce651ee386f4,
         type: 3}
       propertyPath: m_Text
@@ -605,6 +620,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1104833466959103878, guid: 98a55ba42f538b84d92fce651ee386f4,
+        type: 3}
+      propertyPath: m_RaycastTarget
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1104833466591752177, guid: 98a55ba42f538b84d92fce651ee386f4,
         type: 3}
@@ -736,6 +756,11 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 1104833466959103878, guid: 98a55ba42f538b84d92fce651ee386f4,
+        type: 3}
+      propertyPath: m_RaycastTarget
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1104833466591752177, guid: 98a55ba42f538b84d92fce651ee386f4,
         type: 3}
       propertyPath: m_Text
@@ -865,6 +890,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1104833466959103878, guid: 98a55ba42f538b84d92fce651ee386f4,
+        type: 3}
+      propertyPath: m_RaycastTarget
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1104833466591752177, guid: 98a55ba42f538b84d92fce651ee386f4,
         type: 3}
@@ -996,6 +1026,11 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 1104833466959103878, guid: 98a55ba42f538b84d92fce651ee386f4,
+        type: 3}
+      propertyPath: m_RaycastTarget
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1104833466591752177, guid: 98a55ba42f538b84d92fce651ee386f4,
         type: 3}
       propertyPath: m_Text
@@ -1125,6 +1160,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1104833466959103878, guid: 98a55ba42f538b84d92fce651ee386f4,
+        type: 3}
+      propertyPath: m_RaycastTarget
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1104833466591752177, guid: 98a55ba42f538b84d92fce651ee386f4,
         type: 3}
@@ -1256,6 +1296,11 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 1104833466959103878, guid: 98a55ba42f538b84d92fce651ee386f4,
+        type: 3}
+      propertyPath: m_RaycastTarget
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1104833466591752177, guid: 98a55ba42f538b84d92fce651ee386f4,
         type: 3}
       propertyPath: m_Text
@@ -1385,6 +1430,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1104833466959103878, guid: 98a55ba42f538b84d92fce651ee386f4,
+        type: 3}
+      propertyPath: m_RaycastTarget
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1104833466591752177, guid: 98a55ba42f538b84d92fce651ee386f4,
         type: 3}
