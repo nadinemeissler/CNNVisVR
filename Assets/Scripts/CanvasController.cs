@@ -32,6 +32,8 @@ public class CanvasController : MonoBehaviour
     // Panels with UI components for input/output of different layers
     public Image[] inputPanels;
     public Image[] outputPanels;
+    public Image[] fcOutputPanels;
+    public Image[] modelOutputPanels;
     // Images in scene which display input image
     public Image[] inputImages;
 
@@ -59,13 +61,12 @@ public class CanvasController : MonoBehaviour
         spriteLoader = this.gameObject.GetComponent<SpriteLoader>();
 
         // Get button components from canvas
-        // change the parameter to true if buttons are inactive on start
         filterPanel = canvasOperation[0].transform.Find("Filter_Panel").GetComponent<Image>();
         fmPanelIn = canvasInOut[0].transform.Find("FM_Panel").GetComponent<Image>();
         fmPanelOut = canvasInOut[1].transform.Find("FM_Panel").GetComponent<Image>();
 
+        // change the parameter to true if buttons are inactive on start
         filterBtns = filterPanel.GetComponentsInChildren<Button>(true);
-
         fmBtnsIn = fmPanelIn.GetComponentsInChildren<Button>(true);
         fmBtnsOut = fmPanelOut.GetComponentsInChildren<Button>(true);
 
@@ -171,6 +172,7 @@ public class CanvasController : MonoBehaviour
                     UpdateFms("pool", "out");
                     break;
                 case "fc":
+                    UpdateFms("fc", "out");
                     break;
                 case "output":
                     break;
@@ -399,6 +401,10 @@ public class CanvasController : MonoBehaviour
 
         Debug.Log("New input img: "+selectedInput);
 
+        // Hide detail canvas for fms
+        canvasFmDetails.gameObject.SetActive(false);
+        canvasFmDetailsLeft.gameObject.SetActive(false);
+
         // Change input images in scene to new input image
         if(spriteLoader.GetInputImages().Length > selectedInput)
         {
@@ -418,9 +424,6 @@ public class CanvasController : MonoBehaviour
 
     private void ShowInput()
     {
-        // TO-DO
-        // set values on Input layer canvas
-
         // change color for background panels
         foreach (var img in colorPanels)
         {
@@ -647,6 +650,15 @@ public class CanvasController : MonoBehaviour
             if (tempcanvas.gameObject.activeSelf) { tempcanvas.gameObject.SetActive(false); }
         }
 
+        // hide all fc output panels
+        foreach (var tempcanvas in fcOutputPanels)
+        {
+            if (tempcanvas.gameObject.activeSelf) { tempcanvas.gameObject.SetActive(false); }
+        }
+
+        // show fc output panel for selected input
+        fcOutputPanels[selectedInput].gameObject.SetActive(true);
+
         // show input canvas
         canvasInOut[0].gameObject.SetActive(true);
 
@@ -685,6 +697,15 @@ public class CanvasController : MonoBehaviour
         {
             if (tempcanvas.gameObject.activeSelf) { tempcanvas.gameObject.SetActive(false); }
         }
+
+        // hide all model output panels
+        foreach (var tempcanvas in modelOutputPanels)
+        {
+            if (tempcanvas.gameObject.activeSelf) { tempcanvas.gameObject.SetActive(false); }
+        }
+
+        // show model output panel for selected input
+        modelOutputPanels[selectedInput].gameObject.SetActive(true);
 
         // Show Output Canvas
         canvasOperation[canvasOperation.Length - 1].gameObject.SetActive(true);
