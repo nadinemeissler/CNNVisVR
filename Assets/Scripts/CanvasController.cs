@@ -195,7 +195,7 @@ public class CanvasController : MonoBehaviour
         string type = selectedLayer.GetLayerType();
         
         // Reset highlight color for layer buttons
-        ResetHighlightColor();
+        //ResetHighlightColor();
 
         // call next functions depending on layer type
         switch (type)
@@ -203,30 +203,30 @@ public class CanvasController : MonoBehaviour
             case "input":
                 Debug.Log("Layer: " + type);
                 // Add highlight Color for selected Layer Button
-                layerBtns[selectedLayer.GetLayerID()].GetComponent<Image>().color = normalColor;
+                //layerBtns[selectedLayer.GetLayerID()].GetComponent<Image>().color = normalColor;
                 ShowInput();
                 break;
             case "conv":
                 // Add highlight Color for selected Layer Button
-                layerBtns[selectedLayer.GetLayerID()].GetComponent<Image>().color = convColor;
+                //layerBtns[selectedLayer.GetLayerID()].GetComponent<Image>().color = convColor;
                 ShowConv();
                 break;
             case "pool":
                 Debug.Log("Layer: " + type);
                 // Add highlight Color for selected Layer Button
-                layerBtns[selectedLayer.GetLayerID()].GetComponent<Image>().color = poolColor;
+                //layerBtns[selectedLayer.GetLayerID()].GetComponent<Image>().color = poolColor;
                 ShowPool();
                 break;
             case "fc":
                 Debug.Log("Layer: " + type);
                 // Add highlight Color for selected Layer Button
-                layerBtns[selectedLayer.GetLayerID()].GetComponent<Image>().color = fcColor;
+                //layerBtns[selectedLayer.GetLayerID()].GetComponent<Image>().color = fcColor;
                 ShowFC();
                 break;
             case "output":
                 Debug.Log("Layer: " + type);
                 // Add highlight Color for selected Layer Button
-                layerBtns[selectedLayer.GetLayerID()].GetComponent<Image>().color = fcColor;
+                //layerBtns[selectedLayer.GetLayerID()].GetComponent<Image>().color = fcColor;
                 ShowOutput();
                 break;
             default:
@@ -488,6 +488,13 @@ public class CanvasController : MonoBehaviour
         }
     }
 
+    public void HideDetailObj()
+    {
+        var go = EventSystem.current.currentSelectedGameObject;
+
+        go.transform.parent.parent.gameObject.SetActive(false);
+    }
+
     // Called from buttons from Canvas_Middle_LayerInput
     public void ShowInputSelection()
     {
@@ -582,7 +589,17 @@ public class CanvasController : MonoBehaviour
 
         var go = EventSystem.current.currentSelectedGameObject;
 
-        go.gameObject.SetActive(false);
+        switch(go.name) {
+            case "Info_Button_1":
+                detailsObjs[1].gameObject.SetActive(false);
+                detailsObjs[0].gameObject.SetActive(true);
+                break;
+            case "Info_Button_2":
+                detailsObjs[0].gameObject.SetActive(false);
+                detailsObjs[1].gameObject.SetActive(true);
+                break;
+        }
+      
     }
 
     private void ResetHighlightColor()
