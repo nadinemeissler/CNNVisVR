@@ -40,6 +40,7 @@ public class CanvasController : MonoBehaviour
     // Images in scene which display input image
     public Image[] inputImages;
     public Sprite openLock, closedLock;
+    public Button infoBtn1, infoBtn2;
 
     // Array for GameObjects which have the layer buttons as children
     public GameObject[] layerObjs;
@@ -60,7 +61,7 @@ public class CanvasController : MonoBehaviour
     float[] colorbarMaxValues;
 
     // Colors for canvas
-    Color32 convColor, poolColor, fcColor, normalColor;
+    Color32 convColor, poolColor, fcColor, normalColor, buttonColor;
 
     bool inputChanged, linked;
 
@@ -129,6 +130,7 @@ public class CanvasController : MonoBehaviour
         poolColor = new Color32(226, 56, 42, 184);
         fcColor = new Color32(65, 101, 195, 184);
         normalColor = new Color32(0, 211, 224, 184);
+        buttonColor = new Color32(190, 190, 190, 255);
 
         // Set maximum values for feature map colorbars
         colorbarMaxValues = new float[] {0.89f, 0.92f, 0.91f, 0.96f, 0.91f, 1.14f};
@@ -167,12 +169,6 @@ public class CanvasController : MonoBehaviour
         }
 
         //Debug.Log("Anz. Buttons: "+filterBtns.Length);        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 
     // Called from layer buttons on 3D model
@@ -486,13 +482,23 @@ public class CanvasController : MonoBehaviour
         if(go.transform.parent.name.Equals("Canvas_Filter_Details")) {
             canvasFmDetails.gameObject.SetActive(false);
         }
+
+        if (go.name.Equals("XButton_inputSelect"))
+        {
+            filterPanel.gameObject.SetActive(true);
+        }
     }
 
     public void HideDetailObj()
     {
         var go = EventSystem.current.currentSelectedGameObject;
 
+        // Hide detail 3d Object
         go.transform.parent.parent.gameObject.SetActive(false);
+
+        // reset color for info Buttons
+        infoBtn1.image.color = Color.white;
+        infoBtn2.image.color = Color.white;
     }
 
     // Called from buttons from Canvas_Middle_LayerInput
@@ -500,6 +506,7 @@ public class CanvasController : MonoBehaviour
     {
         // Show input selection canvas
         canvasInputSelect.gameObject.SetActive(true);
+        filterPanel.gameObject.SetActive(false);
     }
 
     // Called from buttons from input selection canvas
@@ -577,6 +584,9 @@ public class CanvasController : MonoBehaviour
         canvasFmDetailsLeft.transform.Find("Colorbar_Image/Max_Text").GetComponent<Text>().text = colorbarMaxValues[selectedInput].ToString(CultureInfo.InvariantCulture);
         canvasFmDetails.transform.Find("Colorbar_Image/Max_Text").GetComponent<Text>().text = colorbarMaxValues[selectedInput].ToString(CultureInfo.InvariantCulture);
 
+        // Show Filter Panel
+        filterPanel.gameObject.SetActive(true);
+
         // Hide input selection canvas
         // Add animation?
         canvasInputSelect.gameObject.SetActive(false);
@@ -585,18 +595,20 @@ public class CanvasController : MonoBehaviour
 
     public void ShowInfoModel()
     {
-        // TO-DO
-
         var go = EventSystem.current.currentSelectedGameObject;
 
         switch(go.name) {
             case "Info_Button_1":
                 detailsObjs[1].gameObject.SetActive(false);
                 detailsObjs[0].gameObject.SetActive(true);
+                go.GetComponent<Button>().image.color = buttonColor;
+                infoBtn2.image.color = Color.white;
                 break;
             case "Info_Button_2":
                 detailsObjs[0].gameObject.SetActive(false);
                 detailsObjs[1].gameObject.SetActive(true);
+                go.GetComponent<Button>().image.color = buttonColor;
+                infoBtn1.image.color = Color.white;
                 break;
         }
       
@@ -679,6 +691,9 @@ public class CanvasController : MonoBehaviour
 
         // update output for layer (new feature maps)
         UpdateFms("conv", "out");
+
+        // activate output panel for conv layer
+        outputPanels[1].gameObject.SetActive(true);
 
         // change color for background panels
         foreach (var img in colorPanels)
