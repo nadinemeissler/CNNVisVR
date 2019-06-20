@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Globalization;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 /*
- * Controlls the UI-Elements   
+ * Author: Nadine Meißler
+ * Date: June 2019
+ * Description: Controlls the UI-Elements on the canvases used for the viusalization  
  */
 
 public class CanvasController : MonoBehaviour
@@ -32,13 +32,16 @@ public class CanvasController : MonoBehaviour
     public Canvas canvasLink;
     // Image background panels which have to change color
     public Image[] colorPanels;
+
     // Panels with UI components for input/output of different layers
     public Image[] inputPanels;
     public Image[] outputPanels;
     public Image[] fcOutputPanels;
     public Image[] modelOutputPanels;
+
     // Images in scene which display input image
     public Image[] inputImages;
+
     public Sprite openLock, closedLock;
     public Button infoBtn1, infoBtn2;
 
@@ -48,12 +51,14 @@ public class CanvasController : MonoBehaviour
     public GameObject[] detailsObjs;
 
     SpriteLoader spriteLoader;
+
     // Array for buttons from 3D-Model
     Button[] layerBtns;
     // Array for layer instances
     Layer[] layers;
+
     Layer selectedLayer;
-    int selectedInput, inputsNum, m_FilterID, m_FMID;
+    int selectedInput, m_FilterID, m_FMID;
     Text filterNum, outNum, inNum, filterName, filterValuesTxt, fmName, fmDimensions;
     Image filterImg, fmImg;
     Image filterPanel, fmPanelIn, fmPanelOut, inputImgPanel;
@@ -63,7 +68,7 @@ public class CanvasController : MonoBehaviour
     // Colors for canvas
     Color32 convColor, poolColor, fcColor, normalColor, buttonColor;
 
-    bool inputChanged, linked;
+    bool linked;
 
     private void Awake()
     {
@@ -99,9 +104,6 @@ public class CanvasController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        // Set number of different input images
-        inputsNum = 6;
-
         // Start with linked filter and fm details
         linked = true;
 
@@ -132,7 +134,7 @@ public class CanvasController : MonoBehaviour
         normalColor = new Color32(0, 211, 224, 184);
         buttonColor = new Color32(190, 190, 190, 255);
 
-        // Set maximum values for feature map colorbars
+        // Set maximum values for feature map colorbars (minimum ist always 0.0)
         colorbarMaxValues = new float[] {0.89f, 0.92f, 0.91f, 0.96f, 0.91f, 1.14f};
 
         // set layer IDs, layer types and names
@@ -166,10 +168,12 @@ public class CanvasController : MonoBehaviour
                     layers[i].SetLayerName("Output");
                     break;
             }
-        }
-
-        //Debug.Log("Anz. Buttons: "+filterBtns.Length);        
+        }       
     }
+
+    /*
+     * Functions called from buttons in the scene
+     */ 
 
     // Called from layer buttons on 3D model
     // Handles the display of the details of the selected layer
@@ -273,89 +277,6 @@ public class CanvasController : MonoBehaviour
         {
             ShowLinkedFM(index);
         }
-    }
-
-    private void ShowFilterValues(int index)
-    {
-        // load values for filter
-        string[,] filterValues = spriteLoader.GetFilterValues(selectedLayer.GetLayerName());
-
-        filterValuesTxt.text = "";
-
-        // Add filter values to Text on filterdetails canvas
-        if (index > -1 && index < filterValues.GetLength(0))
-        {
-            for (int i = 0; i < filterValues.GetLength(1); i++)
-            {
-                double temp = Convert.ToDouble(filterValues[index, i]);
-
-                if (temp < 0)
-                {
-                    filterValuesTxt.text += filterValues[index, i].Remove(5) + " ";
-                }
-                else
-                {
-                    filterValuesTxt.text += filterValues[index, i].Remove(4) + " ";
-                }
-
-                switch (i)
-                {
-                    case 2:
-                        filterValuesTxt.text += "\n";
-                        break;
-                    case 5:
-                        filterValuesTxt.text += "\n";
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
-        else
-        {
-            Debug.Log("CanvasController - ShowFilterDetails: invalid index");
-            return;
-        }
-
-    }
-
-    private void ShowLinkedFilter(int index)
-    {
-        // change filter name on Canvas
-        filterName.text = "Filter " + index.ToString();
-
-        // set m_FilterID to index
-        m_FilterID = index;
-
-        // change filter image on new canvas to selected filter image
-        filterImg.sprite = filterBtns[index].image.sprite;
-
-        // Show filter values on canvas
-        ShowFilterValues(index);
-
-        // Show canvas with filter details
-        canvasFilterDetails.gameObject.SetActive(true);
-    }
-
-    private void ShowLinkedFM(int index)
-    {
-        // change feature map name on Canvas
-        fmName.text = "Feature Map " + index.ToString();
-
-        // change feature map image on new canvas to selected feature map image
-        fmImg.sprite = fmBtnsOut[index].image.sprite;
-
-        // Change dimensions text
-        fmDimensions.text = "26x26";
-
-        // set m_fmID to index
-        m_FMID = index;
-
-        // hide x button
-        canvasFmDetails.transform.Find("InteractiveButton").gameObject.SetActive(false);
-
-        // Show canvas with fm details
-        canvasFmDetails.gameObject.SetActive(true);
     }
 
     // Called from buttons which display feature maps
@@ -614,6 +535,10 @@ public class CanvasController : MonoBehaviour
       
     }
 
+    /*
+     * private functions
+     */ 
+
     private void ResetHighlightColor()
     {
         // Reset Color for all Layer Name Buttons
@@ -623,6 +548,7 @@ public class CanvasController : MonoBehaviour
         }
     }
 
+    // Show all UI elements for model input layer
     private void ShowInput()
     {
         // change color for background panels
@@ -732,6 +658,7 @@ public class CanvasController : MonoBehaviour
         }
     }
 
+    // show all UI elements for pooling layer
     private void ShowPool()
     {
         // Update input canvas for layer (feature maps from layer before)
@@ -803,13 +730,9 @@ public class CanvasController : MonoBehaviour
         }
     }
 
+    // Show all UI elements for fully connected layer
     private void ShowFC()
     {
-        // TO-DO
-        // set values on operation canvas
-
-        // set values on input canvas
-
         // deactivate Panels for layer input
         foreach (var panel in inputPanels)
         {
@@ -879,11 +802,9 @@ public class CanvasController : MonoBehaviour
         }
     }
 
+    // Show all UI elements for model output layer
     private void ShowOutput()
     {
-        // TO-DO
-        // Set values on model Output Canvas
-
         // change color for background panels
         foreach (var img in colorPanels)
         {
@@ -915,6 +836,92 @@ public class CanvasController : MonoBehaviour
         canvasOperation[canvasOperation.Length - 1].gameObject.SetActive(true);
     }
 
+    // Show filter details for filter linked to selected FM
+    private void ShowLinkedFilter(int index)
+    {
+        // change filter name on Canvas
+        filterName.text = "Filter " + index.ToString();
+
+        // set m_FilterID to index
+        m_FilterID = index;
+
+        // change filter image on new canvas to selected filter image
+        filterImg.sprite = filterBtns[index].image.sprite;
+
+        // Show filter values on canvas
+        ShowFilterValues(index);
+
+        // Show canvas with filter details
+        canvasFilterDetails.gameObject.SetActive(true);
+    }
+
+    // Show FM details for FM linked to selected filter
+    private void ShowLinkedFM(int index)
+    {
+        // change feature map name on Canvas
+        fmName.text = "Feature Map " + index.ToString();
+
+        // change feature map image on new canvas to selected feature map image
+        fmImg.sprite = fmBtnsOut[index].image.sprite;
+
+        // Change dimensions text
+        fmDimensions.text = "26x26";
+
+        // set m_fmID to index
+        m_FMID = index;
+
+        // hide x button
+        canvasFmDetails.transform.Find("InteractiveButton").gameObject.SetActive(false);
+
+        // Show canvas with fm details
+        canvasFmDetails.gameObject.SetActive(true);
+    }
+
+    // Load and show filter values for filter with given index
+    private void ShowFilterValues(int index)
+    {
+        // load values for filter
+        string[,] filterValues = spriteLoader.GetFilterValues(selectedLayer.GetLayerName());
+
+        filterValuesTxt.text = "";
+
+        // Add filter values to Text on filterdetails canvas
+        if (index > -1 && index < filterValues.GetLength(0))
+        {
+            for (int i = 0; i < filterValues.GetLength(1); i++)
+            {
+                double temp = Convert.ToDouble(filterValues[index, i]);
+
+                if (temp < 0)
+                {
+                    filterValuesTxt.text += filterValues[index, i].Remove(5) + " ";
+                }
+                else
+                {
+                    filterValuesTxt.text += filterValues[index, i].Remove(4) + " ";
+                }
+
+                switch (i)
+                {
+                    case 2:
+                        filterValuesTxt.text += "\n";
+                        break;
+                    case 5:
+                        filterValuesTxt.text += "\n";
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+        else
+        {
+            Debug.Log("CanvasController - ShowFilterDetails: invalid index");
+            return;
+        }
+    }
+
+    // Update all filter data to show on conv operation canvas
     private void UpdateFilters()
     {
         // Load sprites from conv1 or conv2 filters depending on layer name
@@ -953,6 +960,7 @@ public class CanvasController : MonoBehaviour
         }
     }
 
+    // Update all FM data to show on input or output canvas from different layers
     private void UpdateFms(string layertype, string inOrOut)
     {
         switch (layertype)
@@ -962,7 +970,7 @@ public class CanvasController : MonoBehaviour
             case "fc":
                 break;
             default:
-                Debug.Log("CanvasController - UpdateFms: invalid layertype: " + layertype + ". Valid layertypes: conv, pool");
+                Debug.Log("CanvasController - UpdateFms: invalid layertype: " + layertype + ". Valid layertypes: conv, pool, fc");
                 return;
         }
 
@@ -1017,7 +1025,7 @@ public class CanvasController : MonoBehaviour
         // Add loaded fm sprites from resources to buttons
         if (fmBtns != null)
         {
-            // depending on input ID show the fms for input
+            // depending on input ID show the fms for selected input image
             switch (selectedInput)
             {
                 case 0:

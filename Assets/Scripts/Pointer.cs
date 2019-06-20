@@ -1,10 +1,17 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class Pointer : MonoBehaviour
 {
+    /***************************************************************************************
+    *    Code copied from:
+    *    Title: [01][Unity] SteamVR Canvas Pointer - Pointer
+    *    Author: Youtube Channel "VR with Andrew"
+    *    Date: 27.02.2019
+    *    Link: https://www.youtube.com/watch?v=3mRI1hu9Y3w
+    *
+    ***************************************************************************************/
+
     public float m_DefaultLength = 5.0f;
     public GameObject m_Dot;
     public VRInputModule m_InputModule;
@@ -25,7 +32,6 @@ public class Pointer : MonoBehaviour
 
     private void UpdateLine()
     {
-        
         PointerEventData data = m_InputModule.GetData();
 
         // Use default lenght if pointer is not hitting anything, else use distance
@@ -41,9 +47,6 @@ public class Pointer : MonoBehaviour
         if (hit.collider != null)
         {
             endPosition = hit.point;
-            //print(hit.collider.gameObject.name);
-
-            // change pointer color if it hits a button
         } 
 
         // Set position of the dot

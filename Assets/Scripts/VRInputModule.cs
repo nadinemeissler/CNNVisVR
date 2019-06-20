@@ -1,11 +1,18 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using Valve.VR;
 
 public class VRInputModule : BaseInputModule
 {
+    /***************************************************************************************
+    *    Code copied from:
+    *    Title: [02][Unity] SteamVR Canvas Pointer - VRInputModule
+    *    Author: Youtube Channel "VR with Andrew"
+    *    Date: 06.03.2019
+    *    Link: https://www.youtube.com/watch?v=h_BMXDWv10I
+    *
+    ***************************************************************************************/
+
     public Camera m_Camera;
     public SteamVR_Input_Sources m_TargetSource;
     public SteamVR_Action_Boolean m_ClickAction;
@@ -83,7 +90,6 @@ public class VRInputModule : BaseInputModule
 
         // Check for Click handler
         GameObject pointerUpHandler = ExecuteEvents.GetEventHandler<IPointerClickHandler>(m_CurrentObject);
-
 
         // Check
         if(data.pointerPress == pointerUpHandler)

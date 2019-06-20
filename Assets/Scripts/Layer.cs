@@ -1,11 +1,14 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Layer : MonoBehaviour
 {
-    // TO-DO
-    // Add set and get methods
+    /*
+     * Author: Nadine Meißler
+     * Date: June 2019
+     * Description: Layer blueprint
+     * 
+     */ 
+
     private int layerID = -1;
     private int inputLength = -1;
     private int outputLength = -1;
